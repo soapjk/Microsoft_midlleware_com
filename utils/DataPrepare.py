@@ -27,7 +27,7 @@ def Data_preprocess():
         col_value_df.sort_values(by='value', inplace=True)
         col_value_df.to_csv('../Data/feature_value_num.csv', index=None, encoding='utf-8')
         feature_id_dict.pop('MachineIdentifier')
-        f = open('../Data/feature_value_num.csv', 'w', encoding='utf-8')
+        f = open('../Data/feature_id_dict.csv', 'w', encoding='utf-8')
         f.write(str(feature_id_dict))
         f.close()
 

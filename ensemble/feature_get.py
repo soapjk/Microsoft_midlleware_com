@@ -2,8 +2,8 @@ from utils.DataPrepare import *
 
 
 def feature_func(df_train):
-    Data_preprocess()
-    origin_feature_set = eval(open('../Data/feature_value_num.csv', 'r').readline())
+    #Data_preprocess()
+    #origin_feature_set = eval(open('../Data/feature_value_num.csv', 'r').readline())
     df_train['EngineVersion_encode'] = df_train['EngineVersion'].replace({'1.1.10302.0':0, '1.1.10401.0':1, '1.1.10701.0':2, '1.1.11104.0':3, '1.1.11202.0':4, '1.1.11302.0':5, '1.1.11400.0':6, '1.1.11502.0':7,
 '1.1.11602.0':8, '1.1.11701.0':9, '1.1.11804.0':10, '1.1.11903.0':11, '1.1.12002.0':12, '1.1.12101.0':13, '1.1.12205.0':14, '1.1.12300.0':15,
 '1.1.12400.0':16, '1.1.12505.0':17, '1.1.12603.0':18, '1.1.12706.0':19, '1.1.12802.0':20, '1.1.12804.0':21, '1.1.12805.0':22, '1.1.12902.0':23,
