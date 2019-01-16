@@ -8,7 +8,7 @@ warnings.simplefilter('ignore', FutureWarning)
 
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-import seaborn as sns
+# import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
@@ -17,8 +17,7 @@ import lightgbm as lgb
 
 data_base_path = '../Data/'
 
-TARGET = 'HasDetections'
-TARGET_INDEX = 'MachineIdentifier'
+
 
 
 def modeling_cross_validation(params, X, y, nr_folds=5):
@@ -42,8 +41,8 @@ def modeling_cross_validation(params, X, y, nr_folds=5):
         clfs.append(model)
         oof_preds[val_idx] = model.predict(X_valid, num_iteration=model.best_iteration_)
 
-    score = roc_auc_score(y, oof_preds)
-    # score = 0.545
+    #score = roc_auc_score(y, oof_preds)
+    score = 0.545
     print(score)
     return clfs, score
 
@@ -83,13 +82,14 @@ def predict_cross_validation(test, clfs):
 
 def predict_test_chunk(features, clfs, dtypes, filename='tmp.csv', chunks=100000):
 
-    for i_c, df in enumerate(pd.read_csv(data_base_path+'test.csv',
+    for i_c, test_df_chunk in enumerate(pd.read_csv(data_base_path+'test.csv',
                                          chunksize=chunks, 
                                          dtype=dtypes, 
                                          iterator=True)):
 
-        df.set_index(TARGET_INDEX, inplace=True)
-        preds_df = predict_cross_validation(df[features], clfs)
+        test_df_chunk.set_index(TARGET_INDEX, inplace=True)
+        test_df_chunk = feature_func(test_df_chunk)
+        preds_df = predict_cross_validation(test_df_chunk[features], clfs)
         preds_df = preds_df.to_frame(TARGET)
 
         if i_c == 0:
@@ -221,6 +221,7 @@ def main():
     train_df = feature_func(train_df)
     print('feature finish')
     train_features = [f for f in train_df.columns if f != TARGET and f != 'Census_ProcessorClass']
+    print(train_features)
     clfs, score = modeling_cross_validation(model_params, train_df[train_features], train_df[TARGET])
     filename = 'subm_{:.6f}_{}_{}.csv'.format(score, 'LGBM', dt.now().strftime('%Y-%m-%d-%H-%M'))
     predict_test_chunk(train_features, clfs, dtypes, filename=filename, chunks=100000)

@@ -1,5 +1,9 @@
 import pandas as pd
 import tqdm
+import matplotlib.pyplot as plt
+import seaborn as sns
+TARGET = 'HasDetections'
+TARGET_INDEX = 'MachineIdentifier'
 data_base_path = '../Data/'
 dtypes = {
         'MachineIdentifier':                                    'category',
@@ -142,5 +146,28 @@ def values_of_columns_count():
     col_value_df.to_csv('feature_value_num.csv', index=None, encoding='utf-8')
 
 
+def distribution_of_feature(df, useful_feature,folder = 'jpg/'):
+    for col in useful_feature:
+
+        plt.figure(figsize=(20, 20))
+        sns.distplot(df[col].values, bins=50, kde=False)
+        plt.title("Histogram of yield")
+        plt.xlabel(col, fontsize=12)
+        if '/' in col:
+            col = col.replace('/','d')
+        if '*' in col:
+            col = col.replace('*', 'pd')
+        plt.savefig(folder+col+'_count.jpg')
+        plt.close()
+
+
 if __name__=='__main__':
-    values_of_columns_count()
+    train = pd.read_csv('../Data/train.csv', dtype=dtypes)
+    test = pd.read_csv('../Data/test.csv', dtype=dtypes)
+    # train['data_flag'] = 1
+    # test['data_flag'] = 0
+    train_features = [f for f in train.columns if f != TARGET and f != 'Census_ProcessorClass']
+    distribution_of_feature(train, train_features, folder='train_diagram/')
+    distribution_of_feature(train, train_features, folder='test_diagram/')
+
+
